@@ -1,0 +1,215 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the application (customer or admin).",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique identifier for the user (from Firebase Auth)."
+        },
+        "name": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["customer", "admin"],
+          "description": "The user's role."
+        },
+        "favorites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of favorite product IDs."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the user account was created."
+        }
+      },
+      "required": ["uid", "name", "email", "role", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "A menu item.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the product."
+        },
+        "description": {
+          "type": "string",
+          "description": "A short description of the product."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the product."
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "Aperitivos",
+            "Pratos principais",
+            "Carnes",
+            "Massas",
+            "Frango & Peixe",
+            "Burgers",
+            "Saladas",
+            "Acompanhamentos",
+            "Sobremesas",
+            "Bebidas"
+          ],
+          "description": "The category of the product."
+        },
+        "type": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Dietary types (e.g., vegan, vegetarian, gluten-free, meat)."
+        },
+        "imageUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the product image."
+        },
+        "isAvailable": {
+          "type": "boolean",
+          "description": "Whether the product is currently available."
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Whether the product is featured on the home page."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the product was added."
+        }
+      },
+      "required": ["name", "description", "price", "category", "imageUrl", "isAvailable", "isFeatured", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer's order.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who placed the order."
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "price": {
+                "type": "number"
+              },
+              "quantity": {
+                "type": "number"
+              }
+            },
+            "required": ["productId", "name", "price", "quantity"]
+          },
+          "description": "The items in the order."
+        },
+        "total": {
+          "type": "number",
+          "description": "The total cost of the order."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "preparing", "ready", "delivered", "cancelled"],
+          "description": "The current status of the order."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["pix", "card", "cash"],
+          "description": "The payment method used."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the order was placed."
+        }
+      },
+      "required": ["userId", "items", "total", "status", "paymentMethod", "createdAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "A customer review for a product.",
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "description": "The ID of the product being reviewed."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who wrote the review."
+        },
+        "userName": {
+          "type": "string",
+          "description": "The name of the user who wrote the review."
+        },
+        "rating": {
+          "type": "number",
+          "description": "The rating given (1-5)."
+        },
+        "comment": {
+          "type": "string",
+          "description": "The review comment."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the review was created."
+        }
+      },
+      "required": ["productId", "userId", "userName", "rating", "comment", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Stores user profiles."
+    },
+    "/products/{productId}": {
+      "schema": {
+        "$ref": "#/entities/Product"
+      },
+      "description": "Stores menu items."
+    },
+    "/orders/{orderId}": {
+      "schema": {
+        "$ref": "#/entities/Order"
+      },
+      "description": "Stores customer orders."
+    },
+    "/reviews/{reviewId}": {
+      "schema": {
+        "$ref": "#/entities/Review"
+      },
+      "description": "Stores product reviews."
+    }
+  }
+}
